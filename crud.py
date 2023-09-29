@@ -1,14 +1,15 @@
 from sqlalchemy.orm import Session
-
+import bcrypt
 import schemas
 from database import User
 import database
 import main
 def create_user(db: Session, user: schemas.user):
-    hashed = user.hashed_password+'hash'
+    salt = bcrypt.gensalt()
+    hashedPassword = hash(user.hashed_password.concat(salt))
     db_user = database.User(
                             username=user.username,
-                            hashed_password=hashed
+                            hashed_password=hashedPassword
                             )
     db.add(db_user)
     db.commit()
